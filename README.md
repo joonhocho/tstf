@@ -19,7 +19,7 @@ $ npm install -g tstf
 $ tstf COMMAND
 running command...
 $ tstf (-v|--version|version)
-tstf/0.0.6 darwin-x64 node-v11.10.0
+tstf/0.0.7 darwin-x64 node-v11.10.0
 $ tstf --help [COMMAND]
 USAGE
   $ tstf COMMAND
@@ -53,7 +53,7 @@ EXAMPLES
   $ tstf genIndex -e src/**/*.test.ts -o src/index.ts -q single -v debug -w src/**/*.ts
 ```
 
-_See code: [dist/node/commands/genIndex.ts](https://github.com/joonhocho/tstf/blob/v0.0.6/dist/node/commands/genIndex.ts)_
+_See code: [dist/node/commands/genIndex.ts](https://github.com/joonhocho/tstf/blob/v0.0.7/dist/node/commands/genIndex.ts)_
 
 ## `tstf help [COMMAND]`
 
@@ -92,5 +92,5 @@ EXAMPLES
   $ tstf relToAlias -p ./path/to/tsconfig.json -q single -w -v debug
 ```
 
-_See code: [dist/node/commands/relToAlias.ts](https://github.com/joonhocho/tstf/blob/v0.0.6/dist/node/commands/relToAlias.ts)_
+_See code: [dist/node/commands/relToAlias.ts](https://github.com/joonhocho/tstf/blob/v0.0.7/dist/node/commands/relToAlias.ts)_
 <!-- commandsstop -->

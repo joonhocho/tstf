@@ -1,6 +1,6 @@
 {
   "name": "tstf",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "CLI tools for useful TypeScript code transformations such as paths transforms.",
   "keywords": [
     "CLI",
