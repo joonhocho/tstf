@@ -19,7 +19,7 @@ $ npm install -g tstf
 $ tstf COMMAND
 running command...
 $ tstf (-v|--version|version)
-tstf/0.0.4 darwin-x64 node-v11.10.0
+tstf/0.0.6 darwin-x64 node-v11.10.0
 $ tstf --help [COMMAND]
 USAGE
   $ tstf COMMAND
@@ -28,8 +28,32 @@ USAGE
 <!-- usagestop -->
 # Commands
 <!-- commands -->
+* [`tstf genIndex`](#tstf-genindex)
 * [`tstf help [COMMAND]`](#tstf-help-command)
 * [`tstf relToAlias`](#tstf-reltoalias)
+
+## `tstf genIndex`
+
+generate index.ts file for all exported modules
+
+```
+USAGE
+  $ tstf genIndex
+
+OPTIONS
+  -e, --exclude=exclude               files to exclude
+  -h, --help                          show CLI help
+  -o, --out=out                       (required) path to output file
+  -q, --quote=single|double           [default: double] whether to use single or double quote
+  -v, --verbose=debug|log|warn|error  [default: log] logging verbosity
+  -w, --write                         whether to write to output file
+
+EXAMPLES
+  $ tstf genIndex -o src/index.ts src/**/*.ts
+  $ tstf genIndex -e src/**/*.test.ts -o src/index.ts -q single -v debug -w src/**/*.ts
+```
+
+_See code: [dist/node/commands/genIndex.ts](https://github.com/joonhocho/tstf/blob/v0.0.6/dist/node/commands/genIndex.ts)_
 
 ## `tstf help [COMMAND]`
 
@@ -68,5 +92,5 @@ EXAMPLES
   $ tstf relToAlias -p ./path/to/tsconfig.json -q single -w -v debug
 ```
 
-_See code: [dist/node/commands/relToAlias.ts](https://github.com/joonhocho/tstf/blob/v0.0.4/dist/node/commands/relToAlias.ts)_
+_See code: [dist/node/commands/relToAlias.ts](https://github.com/joonhocho/tstf/blob/v0.0.6/dist/node/commands/relToAlias.ts)_
 <!-- commandsstop -->

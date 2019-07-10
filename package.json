@@ -1,6 +1,6 @@
 {
   "name": "tstf",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "description": "CLI tools for useful TypeScript code transformations such as paths transforms.",
   "keywords": [
     "CLI",
@@ -56,6 +56,7 @@
     "@oclif/plugin-help": "^2.2.0",
     "@oclif/plugin-not-found": "^1.2.2",
     "@oclif/plugin-warn-if-update-available": "^1.7.0",
+    "ts-jutil": "^1.0.4",
     "ts-morph": "^3.1.0",
     "tslib": "^1.10.0"
   },
