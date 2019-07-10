@@ -19,7 +19,7 @@ $ npm install -g tstf
 $ tstf COMMAND
 running command...
 $ tstf (-v|--version|version)
-tstf/0.0.2 darwin-x64 node-v11.10.0
+tstf/0.0.3 darwin-x64 node-v11.10.0
 $ tstf --help [COMMAND]
 USAGE
   $ tstf COMMAND
@@ -57,16 +57,16 @@ USAGE
   $ tstf relToAlias
 
 OPTIONS
-  -h, --help                                  show CLI help
-  -p, --project=project                       (required) [default: tsconfig.json] path to tsconfig.json
-  -q, --quote=s|d                             [default: d] whether to use single or double quote. default is d(ouble)
-  -v, --verbose=0|1|2|3|debug|log|warn|error  verbose = debug | log (default) | warn | error
-  -w, --write                                 whether to write to source files
+  -h, --help                          show CLI help
+  -p, --project=project               (required) [default: tsconfig.json] path to tsconfig.json
+  -q, --quote=single|double           [default: double] whether to use single or double quote
+  -v, --verbose=debug|log|warn|error  [default: log] logging verbosity
+  -w, --write                         whether to save changes to source files
 
 EXAMPLES
   $ tstf relToAlias -p tsconfig.json
   $ tstf relToAlias -p tsconfig.json -q s -w -v
 ```
 
-_See code: [dist/node/commands/relToAlias.ts](https://github.com/joonhocho/tstf/blob/v0.0.2/dist/node/commands/relToAlias.ts)_
+_See code: [dist/node/commands/relToAlias.ts](https://github.com/joonhocho/tstf/blob/v0.0.3/dist/node/commands/relToAlias.ts)_
 <!-- commandsstop -->
