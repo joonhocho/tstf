@@ -13,8 +13,8 @@ export default class RelativeToAliasPaths extends Command {
     'transform relative paths to alias paths according to tsconfig.compilerOptions.paths';
 
   public static examples = [
-    '$ tstf relToAlias -p tsconfig.json',
-    '$ tstf relToAlias -p tsconfig.json -q s -w -v',
+    '$ tstf relToAlias',
+    '$ tstf relToAlias -p ./path/to/tsconfig.json -q single -w -v debug',
   ];
 
   public static flags = {
@@ -25,7 +25,6 @@ export default class RelativeToAliasPaths extends Command {
       char: 'p',
       description: 'path to tsconfig.json',
       default: 'tsconfig.json',
-      required: true,
     }),
     quote: flagsLib.string({
       char: 'q',
@@ -54,7 +53,7 @@ export default class RelativeToAliasPaths extends Command {
 
     transformRelToAlias({
       logger: new Logger(this, (LogLevel[verbose as any] as any) as LogLevel),
-      configFileName: resolve(process.cwd(), project),
+      configFileName: resolve(process.cwd(), project!),
       singleQuote: quote === Quote.single,
       write,
     });

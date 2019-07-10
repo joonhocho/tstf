@@ -4466,6 +4466,11 @@ ts-jest@^24.0.2:
     semver "^5.5"
     yargs-parser "10.x"
 
+ts-jutil@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.npmjs.org/ts-jutil/-/ts-jutil-1.0.4.tgz#5bfe017c77a226e56a0614c13ccd74568c0a61d6"
+  integrity sha512-4FN7WIpNtng02WYXz6jtfVRteztbTC4R8lvhNhdFISP9qoc8nUSZMcgRWV36cxqD4e7DL3tURKMCEla68RAoKw==
+
 ts-morph@^3.1.0:
   version "3.1.0"
   resolved "https://registry.npmjs.org/ts-morph/-/ts-morph-3.1.0.tgz#233a1588b910096ca70ec494ce6ffca8b356aea5"
