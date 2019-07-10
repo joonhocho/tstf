@@ -41,7 +41,6 @@
     "posttest": "tslint -p . -t stylish",
     "precommit": "npm run all",
     "prepack": "npm run all && oclif-dev manifest && oclif-dev readme",
-    "prepublish": "npm run all",
     "reinstall": "rm -rf ./node_modules ./package-lock.json ./yarn.lock && yarn",
     "start": "npm run test",
     "test": "jest",

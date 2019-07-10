@@ -33,7 +33,7 @@
     "suppressImplicitAnyIndexErrors": false,
     "target": "esnext",
 
-    "outDir": "lib"
+    "outDir": "dist/node"
   },
   "include": ["src/**/*.ts"]
 }
