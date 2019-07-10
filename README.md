@@ -28,28 +28,8 @@ USAGE
 <!-- usagestop -->
 # Commands
 <!-- commands -->
-* [`tstf hello [FILE]`](#tstf-hello-file)
 * [`tstf help [COMMAND]`](#tstf-help-command)
-
-## `tstf hello [FILE]`
-
-describe the command here
-
-```
-USAGE
-  $ tstf hello [FILE]
-
-OPTIONS
-  -f, --force
-  -h, --help       show CLI help
-  -n, --name=name  name to print
-
-EXAMPLE
-  $ tstf hello
-  hello world from ./src/hello.ts!
-```
-
-_See code: [src/commands/hello.ts](https://github.com/joonhocho/tstf/blob/v0.0.1/src/commands/hello.ts)_
+* [`tstf relToAlias`](#tstf-reltoalias)
 
 ## `tstf help [COMMAND]`
 
@@ -67,4 +47,26 @@ OPTIONS
 ```
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v2.2.0/src/commands/help.ts)_
+
+## `tstf relToAlias`
+
+transform relative paths to alias paths according to tsconfig.compilerOptions.paths
+
+```
+USAGE
+  $ tstf relToAlias
+
+OPTIONS
+  -h, --help                                  show CLI help
+  -p, --project=project                       (required) [default: tsconfig.json] path to tsconfig.json
+  -q, --quote=s|d                             [default: d] whether to use single or double quote. default is d(ouble)
+  -v, --verbose=0|1|2|3|debug|log|warn|error  verbose = debug | log (default) | warn | error
+  -w, --write                                 whether to write to source files
+
+EXAMPLES
+  $ tstf relToAlias -p tsconfig.json
+  $ tstf relToAlias -p tsconfig.json -q s -w -v
+```
+
+_See code: [src/commands/relToAlias.ts](https://github.com/joonhocho/tstf/blob/v0.0.1/src/commands/relToAlias.ts)_
 <!-- commandsstop -->
