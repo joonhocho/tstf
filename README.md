@@ -19,7 +19,7 @@ $ npm install -g tstf
 $ tstf COMMAND
 running command...
 $ tstf (-v|--version|version)
-tstf/0.0.3 darwin-x64 node-v11.10.0
+tstf/0.0.4 darwin-x64 node-v11.10.0
 $ tstf --help [COMMAND]
 USAGE
   $ tstf COMMAND
@@ -58,15 +58,15 @@ USAGE
 
 OPTIONS
   -h, --help                          show CLI help
-  -p, --project=project               (required) [default: tsconfig.json] path to tsconfig.json
+  -p, --project=project               [default: tsconfig.json] path to tsconfig.json
   -q, --quote=single|double           [default: double] whether to use single or double quote
   -v, --verbose=debug|log|warn|error  [default: log] logging verbosity
   -w, --write                         whether to save changes to source files
 
 EXAMPLES
-  $ tstf relToAlias -p tsconfig.json
-  $ tstf relToAlias -p tsconfig.json -q s -w -v
+  $ tstf relToAlias
+  $ tstf relToAlias -p ./path/to/tsconfig.json -q single -w -v debug
 ```
 
-_See code: [dist/node/commands/relToAlias.ts](https://github.com/joonhocho/tstf/blob/v0.0.3/dist/node/commands/relToAlias.ts)_
+_See code: [dist/node/commands/relToAlias.ts](https://github.com/joonhocho/tstf/blob/v0.0.4/dist/node/commands/relToAlias.ts)_
 <!-- commandsstop -->
