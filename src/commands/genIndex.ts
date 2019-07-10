@@ -11,13 +11,17 @@ export default class GenerateIndex extends Command {
   public static description = 'generate index.ts file for all exported modules';
 
   public static examples = [
-    '$ tstf genIndex -o src/index.ts src/**/*.ts',
-    '$ tstf genIndex -e src/**/*.test.ts -o src/index.ts -q single -v debug -w src/**/*.ts',
+    '$ tstf genIndex -o src/index.ts',
+    '$ tstf genIndex -s src/**/*.ts -e src/**/*.test.ts -o src/exports.ts -q single -v debug -w',
   ];
 
   public static flags = {
     help: flagsLib.help({
       char: 'h',
+    }),
+    src: flagsLib.string({
+      char: 's',
+      description: 'path to source files',
     }),
     exclude: flagsLib.string({
       char: 'e',
@@ -46,24 +50,22 @@ export default class GenerateIndex extends Command {
     }),
   };
 
-  // enable variable length files argument
   public static strict = false;
 
   public static args = [];
 
   public async run(): Promise<void> {
     const {
-      flags: { quote, exclude, out, write, verbose },
-      argv,
+      flags: { quote, exclude, src, out, write, verbose },
     } = this.parse(GenerateIndex);
 
     generateIndex({
       logger: new Logger(this, (LogLevel[verbose as any] as any) as LogLevel),
-      filePaths: argv,
+      src,
       exclude,
-      singleQuote: quote === Quote.single,
-      outputFile: out,
+      out,
       write,
+      singleQuote: quote === Quote.single,
     });
   }
 }

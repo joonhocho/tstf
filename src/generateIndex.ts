@@ -1,7 +1,7 @@
 import { writeFileSync } from 'fs';
 import globby from 'globby';
 import { basename, dirname, relative, resolve } from 'path';
-import { diff, uniqueItems } from 'ts-jutil/dist/node/array';
+import { diff } from 'ts-jutil/dist/node/array';
 import { ExportedDeclarations, Project } from 'ts-morph';
 import { Logger } from './logger';
 
@@ -9,17 +9,23 @@ import { Logger } from './logger';
 
 export interface IGenerateIndexOptions {
   logger: Logger;
-  singleQuote: boolean;
+  src?: string;
   exclude?: string;
-  filePaths: string[];
-  outputFile: string;
+  out: string;
   write: boolean;
+  singleQuote: boolean;
 }
 
 const compareFiles = (a: string, b: string): number => {
   const aDir = dirname(a);
   const bDir = dirname(b);
   if (aDir === bDir) {
+    if (basename(a).startsWith('index.')) {
+      return -1;
+    }
+    if (basename(b).startsWith('index.')) {
+      return 1;
+    }
     return a.localeCompare(b);
   }
   return aDir.startsWith(bDir) ? 1 : -1;
@@ -39,28 +45,30 @@ const getDefaultName = (abs: string): string => {
 
 export const generateIndex = ({
   logger,
-  singleQuote,
+  src,
   exclude,
-  filePaths,
-  outputFile,
+  out,
   write,
+  singleQuote,
 }: IGenerateIndexOptions): void => {
   const cwd = process.cwd();
   logger.debug('cwd=', cwd);
 
-  const out = resolve(cwd, outputFile);
-  const outDir = dirname(out);
-  logger.debug('output=', out);
+  const toAbs = (path: string): string => resolve(cwd, path);
 
-  const includes = uniqueItems(
-    filePaths.reduce<string[]>((all, path) => all.concat(globby.sync(path)), [])
-  );
+  const outputFile = toAbs(out);
+  const outDir = dirname(outputFile);
+  logger.debug('output=', outputFile);
+
+  const includes = src
+    ? globby.sync(src).map(toAbs)
+    : globby.sync(`${outDir}/**/*.{ts,tsx,js,jsx}`).map(toAbs);
   logger.debug('includes=', includes);
 
-  const excludes = exclude ? globby.sync(exclude) : [];
+  const excludes = exclude ? globby.sync(exclude).map(toAbs) : [];
   logger.debug('excludes=', excludes);
 
-  const files = diff(includes, excludes).sort(compareFiles);
+  const files = diff(includes, excludes.concat(outputFile)).sort(compareFiles);
 
   logger.debug('files=', files);
 
@@ -88,14 +96,16 @@ export const generateIndex = ({
   const project = new Project();
 
   files.forEach((filePath) => {
-    const abs = resolve(cwd, filePath);
+    const abs = toAbs(filePath);
 
     const source = project.addExistingSourceFile(abs);
 
     const expDecs = source.getExportedDeclarations();
     if (expDecs.size) {
       const path = relative(outDir, abs);
-      const from = quote(`./${path}`.replace(/\/index(\.(t|j)sx?$)?$/, ''));
+      const from = quote(
+        `./${path}`.replace(/\.(t|j)sx?$/, '').replace(/\/index$/, '')
+      );
 
       expDecs.forEach((decls, n) => {
         const isDefault = n === 'default';
