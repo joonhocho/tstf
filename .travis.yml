@@ -1,0 +1,17 @@
+language: node_js
+
+node_js:
+  - "node"
+  - "lts/*"
+  - "12"
+  - "11"
+  - "10"
+  - "9"
+  - "8"
+
+script:
+  - ./bin/run --version
+  - ./bin/run --help
+  - yarn run test
+
+after_success: npm run test:coverage:report

@@ -1,0 +1,99 @@
+{
+  "name": "tstf",
+  "version": "0.0.1",
+  "description": "CLI tools for useful TypeScript code transformations such as paths transforms.",
+  "keywords": [
+    "CLI",
+    "tools",
+    "TypeScript",
+    "code",
+    "transformation",
+    "paths"
+  ],
+  "author": "Joon Ho Cho @joonhocho",
+  "license": "MIT",
+  "homepage": "https://github.com/joonhocho/tstf#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joonhocho/tstf.git"
+  },
+  "bugs": {
+    "url": "https://github.com/joonhocho/tstf/issues"
+  },
+  "module": "lib/index.js",
+  "main": "dist/node/index.js",
+  "browser": "dist/browser/index.js",
+  "types": "lib/index.d.ts",
+  "bin": {
+    "tstf": "./bin/run"
+  },
+  "scripts": {
+    "all": "npm run clean && npm run format && npm run lint:fix && npm run build:all && npm run test",
+    "build:all": "npm run build:module && npm run build:node && npm run build:browser",
+    "build:browser": "tsc -p ./tsconfig.browser.json && tscpaths -p ./tsconfig.browser.json -s ./src -o ./dist/browser",
+    "build:module": "tsc -p ./tsconfig.module.json && tscpaths -p ./tsconfig.module.json -s ./src -o ./lib",
+    "build:node": "tsc -p ./tsconfig.node.json && tscpaths -p ./tsconfig.node.json -s ./src -o ./dist/node",
+    "clean": "rm -rf ./lib ./dist ./coverage",
+    "format": "prettier --write \"./*.{js,jsx,ts,tsx}\" \"./src/**/*.{js,jsx,ts,tsx}\"",
+    "lint": "tslint -c ./tslint.json \"src/**/*.ts\"",
+    "lint:fix": "tslint --fix -c ./tslint.json \"src/**/*.ts\"",
+    "postpack": "rm -f oclif.manifest.json",
+    "posttest": "tslint -p . -t stylish",
+    "precommit": "npm run all",
+    "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
+    "prepublish": "npm run all",
+    "reinstall": "rm -rf ./node_modules ./package-lock.json ./yarn.lock && yarn",
+    "start": "npm run test",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:coverage:report": "jest --coverage && cat ./coverage/lcov.info | coveralls",
+    "test:watch": "jest --watch",
+    "version": "oclif-dev readme && git add README.md"
+  },
+  "pre-commit": "precommit",
+  "dependencies": {
+    "@oclif/command": "^1.5.16",
+    "@oclif/config": "^1.13.1",
+    "@oclif/plugin-help": "^2.2.0",
+    "@oclif/plugin-not-found": "^1.2.2",
+    "@oclif/plugin-warn-if-update-available": "^1.7.0",
+    "ts-morph": "^3.1.0",
+    "tslib": "^1.10.0"
+  },
+  "devDependencies": {
+    "@oclif/dev-cli": "^1.22.0",
+    "@types/jest": "^24.0.15",
+    "@types/node": "^12.6.2",
+    "coveralls": "^3.0.4",
+    "globby": "^10.0.1",
+    "jest": "^24.8.0",
+    "pre-commit": "^1.2.2",
+    "prettier": "^1.18.2",
+    "ts-jest": "^24.0.2",
+    "ts-node": "^8.3.0",
+    "tscpaths": "^0.0.9",
+    "tsdef": "^0.0.9",
+    "tslint": "^5.18.0",
+    "tslint-config-airbnb": "^5.11.1",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.5.3"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "oclif": {
+    "bin": "tstf",
+    "commands": "./lib/commands",
+    "plugins": [
+      "@oclif/plugin-help",
+      "@oclif/plugin-warn-if-update-available",
+      "@oclif/plugin-not-found"
+    ]
+  },
+  "files": [
+    ".oclif.manifest.json",
+    "/bin",
+    "/lib",
+    "/dist"
+  ]
+}
