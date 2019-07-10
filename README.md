@@ -19,7 +19,7 @@ $ npm install -g tstf
 $ tstf COMMAND
 running command...
 $ tstf (-v|--version|version)
-tstf/0.0.1 darwin-x64 node-v11.10.0
+tstf/0.0.2 darwin-x64 node-v11.10.0
 $ tstf --help [COMMAND]
 USAGE
   $ tstf COMMAND
@@ -68,5 +68,5 @@ EXAMPLES
   $ tstf relToAlias -p tsconfig.json -q s -w -v
 ```
 
-_See code: [src/commands/relToAlias.ts](https://github.com/joonhocho/tstf/blob/v0.0.1/src/commands/relToAlias.ts)_
+_See code: [dist/node/commands/relToAlias.ts](https://github.com/joonhocho/tstf/blob/v0.0.2/dist/node/commands/relToAlias.ts)_
 <!-- commandsstop -->

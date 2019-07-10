@@ -1,6 +1,6 @@
 {
   "name": "tstf",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "CLI tools for useful TypeScript code transformations such as paths transforms.",
   "keywords": [
     "CLI",
@@ -23,7 +23,7 @@
   "module": "lib/index.js",
   "main": "dist/node/index.js",
   "browser": "dist/browser/index.js",
-  "types": "lib/index.d.ts",
+  "types": "dist/node/index.d.ts",
   "bin": {
     "tstf": "./bin/run"
   },
@@ -40,7 +40,7 @@
     "postpack": "rm -f oclif.manifest.json",
     "posttest": "tslint -p . -t stylish",
     "precommit": "npm run all",
-    "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
+    "prepack": "npm run all && oclif-dev manifest && oclif-dev readme",
     "prepublish": "npm run all",
     "reinstall": "rm -rf ./node_modules ./package-lock.json ./yarn.lock && yarn",
     "start": "npm run test",
@@ -83,7 +83,7 @@
   },
   "oclif": {
     "bin": "tstf",
-    "commands": "./lib/commands",
+    "commands": "./dist/node/commands",
     "plugins": [
       "@oclif/plugin-help",
       "@oclif/plugin-warn-if-update-available",
