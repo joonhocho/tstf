@@ -4,8 +4,8 @@ import { Logger, LogLevel } from '../logger';
 import { transformRelToAlias } from '../transformRelToAlias';
 
 export enum Quote {
-  single = 's',
-  double = 'd',
+  single = 'single',
+  double = 'double',
 }
 
 export default class RelativeToAliasPaths extends Command {
@@ -29,18 +29,19 @@ export default class RelativeToAliasPaths extends Command {
     }),
     quote: flagsLib.string({
       char: 'q',
-      description: 'whether to use single or double quote. default is d(ouble)',
+      description: 'whether to use single or double quote',
       options: Object.values(Quote),
       default: Quote.double,
     }),
     write: flagsLib.boolean({
       char: 'w',
-      description: 'whether to write to source files',
+      description: 'whether to save changes to source files',
     }),
     verbose: flagsLib.string({
       char: 'v',
-      description: 'verbose = debug | log (default) | warn | error',
-      options: Object.keys(LogLevel),
+      description: 'logging verbosity',
+      options: Object.keys(LogLevel).filter((x) => !/\d/.test(x)),
+      default: 'log',
     }),
   };
 
