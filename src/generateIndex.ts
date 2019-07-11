@@ -2,6 +2,7 @@ import { writeFileSync } from 'fs';
 import globby from 'globby';
 import { basename, dirname, relative, resolve } from 'path';
 import { diff } from 'ts-jutil/dist/node/array/diff';
+import { uniqueItems } from 'ts-jutil/dist/node/array/uniqueItems';
 import { ExportedDeclarations, Project } from 'ts-morph';
 import { Logger } from './logger';
 
@@ -16,7 +17,7 @@ export interface IGenerateIndexOptions {
   singleQuote: boolean;
 }
 
-const compareFiles = (a: string, b: string): number => {
+const parentFileFirst = (a: string, b: string): number => {
   const aDir = dirname(a);
   const bDir = dirname(b);
   if (aDir === bDir) {
@@ -43,14 +44,14 @@ const getDefaultName = (abs: string): string => {
   return name;
 };
 
-export const generateIndex = ({
+export const generateIndex = async ({
   logger,
   src,
   exclude,
   out,
   write,
   singleQuote,
-}: IGenerateIndexOptions): void => {
+}: IGenerateIndexOptions): Promise<void> => {
   const cwd = process.cwd();
   logger.debug('cwd=', cwd);
 
@@ -60,17 +61,22 @@ export const generateIndex = ({
   const outDir = dirname(outputFile);
   logger.debug('output=', outputFile);
 
-  const includes = src
-    ? globby.sync(src).map(toAbs)
-    : globby.sync(`${outDir}/**/*.{ts,tsx,js,jsx}`).map(toAbs);
+  let [includes, excludes] = await Promise.all([
+    src ? globby(src) : globby(`${outDir}/**/*.{ts,tsx,js,jsx}`),
+    exclude ? globby(exclude) : [],
+  ]);
+
+  includes = includes.map(toAbs);
   logger.debug('includes=', includes);
 
-  const excludes = exclude ? globby.sync(exclude).map(toAbs) : [];
+  excludes = excludes.map(toAbs);
   logger.debug('excludes=', excludes);
 
-  const files = diff(includes, excludes.concat(outputFile)).sort(compareFiles);
+  const filepaths = diff(includes, excludes.concat(outputFile)).sort(
+    parentFileFirst
+  );
 
-  logger.debug('files=', files);
+  logger.debug('files=', filepaths);
 
   const quote = singleQuote
     ? (s: string): string => `'${s}'`
@@ -80,14 +86,14 @@ export const generateIndex = ({
 
   const nameToDeclToFrom = new Map<string, Map<ExportedDeclarations, string>>();
 
-  const fromToExports = new Map<string, string[]>();
+  const fromToExportClauses = new Map<string, string[]>();
 
-  const addExport = (exportName: string, from: string): void => {
-    const exportNames = fromToExports.get(from);
-    if (exportNames) {
-      exportNames.push(exportName);
+  const addExportClause = (exportClause: string, from: string): void => {
+    const clauses = fromToExportClauses.get(from);
+    if (clauses) {
+      clauses.push(exportClause);
     } else {
-      fromToExports.set(from, [exportName]);
+      fromToExportClauses.set(from, [exportClause]);
     }
   };
 
@@ -95,31 +101,36 @@ export const generateIndex = ({
 
   const project = new Project();
 
-  files.forEach((filePath) => {
-    const abs = toAbs(filePath);
+  for (let fi = 0, flen = filepaths.length; fi < flen; fi += 1) {
+    const filepath = filepaths[fi];
 
-    const source = project.addExistingSourceFile(abs);
+    const source = project.addExistingSourceFile(filepath);
 
-    const expDecs = source.getExportedDeclarations();
-    if (expDecs.size) {
-      const path = relative(outDir, abs);
+    const exportDeclMap = source.getExportedDeclarations();
+    if (exportDeclMap.size) {
+      const path = relative(outDir, filepath);
       const from = quote(
         `./${path}`.replace(/\.(t|j)sx?$/, '').replace(/\/index$/, '')
       );
 
-      expDecs.forEach((decls, n) => {
-        const isDefault = n === 'default';
-        const name = isDefault ? getDefaultName(abs) : n;
-        const exportName = isDefault ? `default as ${name}` : name;
+      for (const [exportName, decls] of Array.from(exportDeclMap.entries())) {
+        const isDefaultExport = exportName === 'default';
+        const betterExportName = isDefaultExport
+          ? getDefaultName(filepath)
+          : exportName;
+        const exportClause = isDefaultExport
+          ? `default as ${betterExportName}`
+          : betterExportName;
 
-        decls.forEach((decl) => {
-          const declToFrom = nameToDeclToFrom.get(name);
+        for (let di = 0, dlen = decls.length; di < dlen; di += 1) {
+          const decl = decls[di];
+          const declToFrom = nameToDeclToFrom.get(betterExportName);
           if (declToFrom) {
             // occupied name
             if (declToFrom.has(decl)) {
               // same value => safe to ignore
               logger.debug(
-                `// export { ${exportName} } from ${from}; // duplicate from ${declToFrom.get(
+                `// export { ${exportClause} } from ${from}; // duplicate from ${declToFrom.get(
                   decl
                 )}`
               );
@@ -127,44 +138,50 @@ export const generateIndex = ({
               // different value => bad overload
               declToFrom.set(decl, from);
               logger.warn(
-                `export { ${exportName} } from ${Array.from(
+                `export { ${exportClause} } from ${Array.from(
                   declToFrom.values()
                 ).join(', ')}`
               );
-              addExport(exportName, from);
+              addExportClause(exportClause, from);
             }
           } else {
             // empty name
-            nameToDeclToFrom.set(name, new Map([[decl, from]]));
+            nameToDeclToFrom.set(betterExportName, new Map([[decl, from]]));
 
             let nameToFroms = decToNameToFroms.get(decl);
             if (nameToFroms) {
               // already exported declaration
               logger.debug(
-                `export { ${exportName} } from ${from}; // also as ${Array.from(
+                `export { ${exportClause} } from ${from}; // also as ${Array.from(
                   nameToFroms.keys()
                 ).join(', ')}`
               );
             } else {
               // fresh export
-              logger.debug(`export { ${exportName} } from ${from};`);
+              logger.debug(`export { ${exportClause} } from ${from};`);
               nameToFroms = new Map<string, string>();
               decToNameToFroms.set(decl, nameToFroms);
             }
 
-            nameToFroms.set(name, from);
+            nameToFroms.set(betterExportName, from);
 
-            addExport(exportName, from);
+            addExportClause(exportClause, from);
           }
-        });
-      });
+        }
+      }
     }
-  });
+  }
 
   const exports: string[] = [];
 
-  fromToExports.forEach((names, from) => {
-    exports.push(`export { ${names.sort().join(', ')} } from ${from};`);
+  fromToExportClauses.forEach((clauses, from) => {
+    // same file can export both ts type and value under same export name
+    // -> use unique filter
+    exports.push(
+      `export { ${uniqueItems(clauses)
+        .sort()
+        .join(', ')} } from ${from};`
+    );
   });
 
   const text = exports.join('\n');

@@ -19,7 +19,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "paths": {
-      "src/*": ["src/*"]
+      "_src/*": ["src/*"]
     },
     "resolveJsonModule": true,
     "rootDir": "src",
@@ -31,9 +31,7 @@
     "strictPropertyInitialization": true,
     "suppressExcessPropertyErrors": false,
     "suppressImplicitAnyIndexErrors": false,
-    "target": "esnext",
-
-    "outDir": "dist/node"
+    "target": "esnext"
   },
   "include": ["src/**/*.ts"]
 }

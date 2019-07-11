@@ -59,7 +59,7 @@ export default class GenerateIndex extends Command {
       flags: { quote, exclude, src, out, write, verbose },
     } = this.parse(GenerateIndex);
 
-    generateIndex({
+    return generateIndex({
       logger: new Logger(this, (LogLevel[verbose as any] as any) as LogLevel),
       src,
       exclude,

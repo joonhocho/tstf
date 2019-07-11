@@ -1,6 +1,6 @@
 {
   "name": "tstf",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "CLI tools for useful TypeScript code transformations such as paths transforms.",
   "keywords": [
     "CLI",
@@ -27,6 +27,7 @@
   "bin": {
     "tstf": "./bin/run"
   },
+  "sideEffects": false,
   "scripts": {
     "all": "npm run clean && npm run format && npm run lint:fix && npm run build:all && npm run test",
     "build:all": "npm run build:module && npm run build:node && npm run build:browser",
