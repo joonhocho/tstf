@@ -7,7 +7,7 @@ import {
   SourceFile,
   TypeGuards,
 } from 'ts-morph';
-import * as ts from 'typescript';
+import ts from 'typescript';
 import { Logger } from './logger';
 
 // tslint:disable-next-line no-var-requires
