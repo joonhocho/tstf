@@ -1,7 +1,7 @@
 import { writeFileSync } from 'fs';
 import globby from 'globby';
 import { basename, dirname, relative, resolve } from 'path';
-import { diff } from 'ts-jutil/dist/node/array';
+import { diff } from 'ts-jutil/dist/node/array/diff';
 import { ExportedDeclarations, Project } from 'ts-morph';
 import { Logger } from './logger';
 
