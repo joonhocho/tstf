@@ -32,17 +32,27 @@ const parentFileFirst = (a: string, b: string): number => {
   return aDir.startsWith(bDir) ? 1 : -1;
 };
 
+const lastPathName = (path: string): string => {
+  const i = path.lastIndexOf('/');
+  return i === -1 ? path : path.substring(i + 1);
+};
+
 const getDefaultName = (abs: string): string => {
   const filename = basename(abs);
   let name: string;
   if (/^index\.(t|j)sx?$/.test(filename)) {
-    const paths = dirname(abs).split('/');
-    name = paths[paths.length - 1];
+    name = lastPathName(dirname(abs));
   } else {
     name = filename.replace(/\.(t|j)sx?$/i, '');
   }
   return name;
 };
+
+const getNamePrefixFromFrom = (from: string): string =>
+  lastPathName(from.substring(1, from.length - 1));
+
+const firstUpper = (s: string): string =>
+  s ? s.charAt(0).toUpperCase() + s.substring(1) : s;
 
 export const generateIndex = async ({
   logger,
@@ -88,6 +98,8 @@ export const generateIndex = async ({
 
   const fromToExportClauses = new Map<string, string[]>();
 
+  const overloadedNames: { [key: string]: 1 } = {};
+
   const addExportClause = (exportClause: string, from: string): void => {
     const clauses = fromToExportClauses.get(from);
     if (clauses) {
@@ -128,36 +140,37 @@ export const generateIndex = async ({
           if (declToFrom) {
             // occupied name
             if (declToFrom.has(decl)) {
-              // same value => safe to ignore
+              // same name, same value => safe to ignore
               logger.debug(
                 `// export { ${exportClause} } from ${from}; // duplicate from ${declToFrom.get(
                   decl
                 )}`
               );
             } else {
-              // different value => bad overload
+              // same name, different value => bad overload
               declToFrom.set(decl, from);
               logger.warn(
                 `export { ${exportClause} } from ${Array.from(
                   declToFrom.values()
                 ).join(', ')}`
               );
+              overloadedNames[betterExportName] = 1;
               addExportClause(exportClause, from);
             }
           } else {
-            // empty name
+            // new name
             nameToDeclToFrom.set(betterExportName, new Map([[decl, from]]));
 
             let nameToFroms = decToNameToFroms.get(decl);
             if (nameToFroms) {
-              // already exported declaration
+              // different names, same value => already exported declaration
               logger.debug(
                 `export { ${exportClause} } from ${from}; // also as ${Array.from(
                   nameToFroms.keys()
                 ).join(', ')}`
               );
             } else {
-              // fresh export
+              // different names, different value => fresh export
               logger.debug(`export { ${exportClause} } from ${from};`);
               nameToFroms = new Map<string, string>();
               decToNameToFroms.set(decl, nameToFroms);
@@ -174,15 +187,21 @@ export const generateIndex = async ({
 
   const exports: string[] = [];
 
-  fromToExportClauses.forEach((clauses, from) => {
+  for (const [from, clauses] of Array.from(fromToExportClauses.entries())) {
     // same file can export both ts type and value under same export name
     // -> use unique filter
+    const uniqClauses = uniqueItems(clauses).sort();
     exports.push(
-      `export { ${uniqueItems(clauses)
-        .sort()
+      `export { ${uniqClauses
+        .map((c) => {
+          if (overloadedNames[c] === 1) {
+            return `${c} as ${getNamePrefixFromFrom(from)}${firstUpper(c)}`;
+          }
+          return c;
+        })
         .join(', ')} } from ${from};`
     );
-  });
+  }
 
   const text = exports.join('\n');
   if (write) {
