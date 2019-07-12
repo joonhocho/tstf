@@ -148,14 +148,28 @@ export const generateIndex = async ({
               );
             } else {
               // same name, different value => bad overload
-              declToFrom.set(decl, from);
-              logger.warn(
-                `export { ${exportClause} } from ${Array.from(
-                  declToFrom.values()
-                ).join(', ')}`
-              );
-              overloadedNames[betterExportName] = 1;
-              addExportClause(exportClause, from);
+              const prevFroms = Array.from(declToFrom.values());
+              if (prevFroms.includes(from)) {
+                // type and value could be exported separately from same file
+                logger.debug(
+                  `export { ${exportClause} } from ${prevFroms
+                    .concat(from)
+                    .join(', ')}`
+                );
+              } else {
+                if (prevFroms.some((x) => x !== from)) {
+                  // overloaded
+                  // different values exported to same name from different files
+                  overloadedNames[betterExportName] = 1;
+                  logger.warn(
+                    `export { ${exportClause} } from ${prevFroms
+                      .concat(from)
+                      .join(', ')}`
+                  );
+                }
+                declToFrom.set(decl, from);
+                addExportClause(exportClause, from);
+              }
             }
           } else {
             // new name
@@ -193,12 +207,12 @@ export const generateIndex = async ({
     const uniqClauses = uniqueItems(clauses).sort();
     exports.push(
       `export { ${uniqClauses
-        .map((c) => {
-          if (overloadedNames[c] === 1) {
-            return `${c} as ${getNamePrefixFromFrom(from)}${firstUpper(c)}`;
-          }
-          return c;
-        })
+        .map((c) =>
+          // prefix filename if overloaded
+          overloadedNames[c] === 1
+            ? `${c} as ${getNamePrefixFromFrom(from)}${firstUpper(c)}`
+            : c
+        )
         .join(', ')} } from ${from};`
     );
   }
