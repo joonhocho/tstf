@@ -1,8 +1,7 @@
 import { writeFileSync } from 'fs';
 import globby from 'globby';
 import { basename, dirname, relative, resolve } from 'path';
-import { diff } from 'ts-jutil/dist/node/array/diff';
-import { uniqueItems } from 'ts-jutil/dist/node/array/uniqueItems';
+import { capitalizeFirst, diff, uniqueItems } from 'ts-jutil';
 import { ExportedDeclarations, Project } from 'ts-morph';
 import { Logger } from './logger';
 
@@ -48,11 +47,17 @@ const getDefaultName = (abs: string): string => {
   return name;
 };
 
-const getNamePrefixFromFrom = (from: string): string =>
-  lastPathName(from.substring(1, from.length - 1));
-
-const firstUpper = (s: string): string =>
-  s ? s.charAt(0).toUpperCase() + s.substring(1) : s;
+const getNamePrefixFromFrom = (from: string, name: string): string => {
+  const paths = from.replace(/['"\s]+/g, '').split('/');
+  const nameL = name.toLowerCase();
+  for (let i = paths.length - 1; i >= 0; i -= 1) {
+    const path = paths[i];
+    if (path.toLowerCase() !== nameL) {
+      return `${path}${capitalizeFirst(name)}`;
+    }
+  }
+  return name;
+};
 
 export const generateIndex = async ({
   logger,
@@ -210,7 +215,7 @@ export const generateIndex = async ({
         .map((c) =>
           // prefix filename if overloaded
           overloadedNames[c] === 1
-            ? `${c} as ${getNamePrefixFromFrom(from)}${firstUpper(c)}`
+            ? `${c} as ${getNamePrefixFromFrom(from, c)}`
             : c
         )
         .join(', ')} } from ${from};`
