@@ -9,8 +9,8 @@ import { Logger } from './logger';
 
 export interface IGenerateIndexOptions {
   logger: Logger;
-  src?: string;
-  exclude?: string;
+  src?: string[];
+  exclude?: string[];
   out: string;
   write: boolean;
   singleQuote: boolean;
@@ -77,8 +77,8 @@ export const generateIndex = async ({
   logger.debug('output=', outputFile);
 
   let [includes, excludes] = await Promise.all([
-    src ? globby(src) : globby(`${outDir}/**/*.{ts,tsx,js,jsx}`),
-    exclude ? globby(exclude) : [],
+    src && src.length ? globby(src) : globby(`${outDir}/**/*.{ts,tsx,js,jsx}`),
+    exclude && exclude.length ? globby(exclude) : [],
   ]);
 
   includes = includes.map(toAbs);

@@ -17,7 +17,7 @@ export default class RelativeToAliasPaths extends Command {
     '$ tstf relToAlias -p ./path/to/tsconfig.json -q single -w -v debug',
   ];
 
-  public static flags = {
+  public static flags: flagsLib.Input<any> = {
     help: flagsLib.help({
       char: 'h',
     }),

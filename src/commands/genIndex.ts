@@ -15,17 +15,19 @@ export default class GenerateIndex extends Command {
     '$ tstf genIndex -s src/**/*.ts -e src/**/*.test.ts -o src/exports.ts -q single -v debug -w',
   ];
 
-  public static flags = {
+  public static flags: flagsLib.Input<any> = {
     help: flagsLib.help({
       char: 'h',
     }),
     src: flagsLib.string({
       char: 's',
       description: 'path to source files',
+      multiple: true,
     }),
     exclude: flagsLib.string({
       char: 'e',
       description: 'files to exclude',
+      multiple: true,
     }),
     out: flagsLib.string({
       char: 'o',
