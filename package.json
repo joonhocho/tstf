@@ -1,6 +1,6 @@
 {
   "name": "tstf",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "CLI tools for useful TypeScript code transformations such as paths transforms.",
   "keywords": [
     "CLI",
@@ -52,19 +52,19 @@
   },
   "pre-commit": "precommit",
   "dependencies": {
-    "@oclif/command": "^1.5.16",
+    "@oclif/command": "^1.5.18",
     "@oclif/config": "^1.13.2",
     "@oclif/plugin-help": "^2.2.0",
     "@oclif/plugin-not-found": "^1.2.2",
     "@oclif/plugin-warn-if-update-available": "^1.7.0",
-    "ts-jutil": "^1.0.11",
-    "ts-morph": "^3.1.0",
+    "ts-jutil": "^1.0.14",
+    "ts-morph": "^3.1.3",
     "tslib": "^1.10.0"
   },
   "devDependencies": {
-    "@oclif/dev-cli": "^1.22.0",
-    "@types/jest": "^24.0.15",
-    "@types/node": "^12.6.2",
+    "@oclif/dev-cli": "^1.22.2",
+    "@types/jest": "^24.0.16",
+    "@types/node": "^12.6.8",
     "coveralls": "^3.0.5",
     "globby": "^10.0.1",
     "jest": "^24.8.0",
