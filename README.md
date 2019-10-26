@@ -19,7 +19,7 @@ $ npm install -g tstf
 $ tstf COMMAND
 running command...
 $ tstf (-v|--version|version)
-tstf/0.0.21 darwin-x64 node-v12.6.0
+tstf/0.0.22 darwin-x64 node-v12.6.0
 $ tstf --help [COMMAND]
 USAGE
   $ tstf COMMAND
@@ -54,7 +54,7 @@ EXAMPLES
   $ tstf genIndex -s src/**/*.ts -e src/**/*.test.ts -o src/exports.ts -q single -v debug -w
 ```
 
-_See code: [dist/node/commands/genIndex.ts](https://github.com/joonhocho/tstf/blob/v0.0.21/dist/node/commands/genIndex.ts)_
+_See code: [dist/node/commands/genIndex.ts](https://github.com/joonhocho/tstf/blob/v0.0.22/dist/node/commands/genIndex.ts)_
 
 ## `tstf help [COMMAND]`
 
@@ -71,7 +71,7 @@ OPTIONS
   --all  see all commands in CLI
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v2.2.0/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v2.2.1/src/commands/help.ts)_
 
 ## `tstf relToAlias`
 
@@ -93,5 +93,5 @@ EXAMPLES
   $ tstf relToAlias -p ./path/to/tsconfig.json -q single -w -v debug
 ```
 
-_See code: [dist/node/commands/relToAlias.ts](https://github.com/joonhocho/tstf/blob/v0.0.21/dist/node/commands/relToAlias.ts)_
+_See code: [dist/node/commands/relToAlias.ts](https://github.com/joonhocho/tstf/blob/v0.0.22/dist/node/commands/relToAlias.ts)_
 <!-- commandsstop -->
