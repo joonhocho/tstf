@@ -45,9 +45,9 @@ export const transformRelToAlias = ({
   logger.debug(`singleQuote = ${singleQuote}`);
 
   const pathToAliasMap = {} as Record<string, string>;
-  Object.keys(paths).forEach((key: any) => {
+  Object.keys(paths).forEach((key: string): void => {
     const alias = key.replace(/\/\*$/, '');
-    (paths as any)[key].forEach((p: string) => {
+    (paths as any)[key].forEach((p: string): void => {
       const path = resolve(basePath, p.replace(/\/\*$/, ''));
       pathToAliasMap[path] = alias;
       logger.debug(`${alias} -> ${path}`);
@@ -62,7 +62,7 @@ export const transformRelToAlias = ({
 
   const getChildStringLiteral = (source: SourceFile, node: ts.Node): string => {
     let from = '';
-    node.forEachChild((c) => {
+    node.forEachChild((c): void => {
       if (c.kind === ts.SyntaxKind.StringLiteral) {
         from = source.compilerNode.text.substring(c.pos, c.end);
       }
@@ -93,66 +93,69 @@ export const transformRelToAlias = ({
 
   let count = 0;
 
-  project.getSourceFiles().forEach((file) => {
+  project.getSourceFiles().forEach((file): void => {
     const dir = file.getDirectory();
     const dirPath = dir.getPath();
 
     let changed = false;
-    file.transform((traversal) => {
-      const { currentNode } = traversal;
-      const node = createWrappedNode(currentNode);
-      if (TypeGuards.isImportDeclaration(node)) {
-        const { compilerNode } = node;
-        const from = stripQuotes(getChildStringLiteral(file, compilerNode));
-        if (from.startsWith('.')) {
-          const aliased = relToAlias(dirPath, from);
-          if (aliased) {
-            const newNode = ts.updateImportDeclaration(
-              compilerNode,
-              compilerNode.decorators,
-              compilerNode.modifiers,
-              compilerNode.importClause,
-              createStringLiteral(aliased)
-            );
+    file.transform(
+      (traversal): ts.Node => {
+        const { currentNode } = traversal;
+        const node = createWrappedNode(currentNode);
+        if (TypeGuards.isImportDeclaration(node)) {
+          const { compilerNode } = node;
+          const from = stripQuotes(getChildStringLiteral(file, compilerNode));
+          if (from.startsWith('.')) {
+            const aliased = relToAlias(dirPath, from);
+            if (aliased) {
+              const newNode = ts.updateImportDeclaration(
+                compilerNode,
+                compilerNode.decorators,
+                compilerNode.modifiers,
+                compilerNode.importClause,
+                createStringLiteral(aliased)
+              );
 
-            count += 1;
-            logger.log(
-              `${count} ${file.getFilePath()}:
+              count += 1;
+              logger.log(
+                `${count} ${file.getFilePath()}:
      ${printNode(compilerNode)}
   -> ${printNode(newNode)}`
-            );
-            changed = true;
-            return newNode;
+              );
+              changed = true;
+              return newNode;
+            }
           }
-        }
-      } else if (TypeGuards.isExportDeclaration(node)) {
-        const { compilerNode } = node;
-        const from = stripQuotes(getChildStringLiteral(file, compilerNode));
-        if (from.startsWith('.')) {
-          const aliased = relToAlias(dirPath, from);
-          if (aliased) {
-            const newNode = ts.updateExportDeclaration(
-              compilerNode,
-              compilerNode.decorators,
-              compilerNode.modifiers,
-              compilerNode.exportClause,
-              createStringLiteral(aliased)
-            );
+        } else if (TypeGuards.isExportDeclaration(node)) {
+          const { compilerNode } = node;
+          const from = stripQuotes(getChildStringLiteral(file, compilerNode));
+          if (from.startsWith('.')) {
+            const aliased = relToAlias(dirPath, from);
+            if (aliased) {
+              const newNode = ts.updateExportDeclaration(
+                compilerNode,
+                compilerNode.decorators,
+                compilerNode.modifiers,
+                compilerNode.exportClause,
+                createStringLiteral(aliased),
+                false
+              );
 
-            count += 1;
-            logger.log(
-              `${count} ${file.getFilePath()}:
+              count += 1;
+              logger.log(
+                `${count} ${file.getFilePath()}:
      ${printNode(compilerNode)}
   -> ${printNode(newNode)}`
-            );
-            changed = true;
-            return newNode;
+              );
+              changed = true;
+              return newNode;
+            }
           }
         }
+
+        return traversal.visitChildren();
       }
-
-      return traversal.visitChildren();
-    });
+    );
 
     if (write && changed) {
       file.saveSync();

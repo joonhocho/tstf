@@ -2,7 +2,7 @@ import { writeFileSync } from 'fs';
 import globby from 'globby';
 import { basename, dirname, relative, resolve } from 'path';
 import { capitalizeFirst, diff, uniqueItems } from 'ts-jutil';
-import { ExportedDeclarations, Project } from 'ts-morph';
+import { ExportedDeclarations, Project, SourceFile } from 'ts-morph';
 import { Logger } from './logger';
 
 // tslint:disable-next-line no-var-requires
@@ -117,12 +117,20 @@ export const generateIndex = async ({
   logger.debug('\n');
 
   const project = new Project();
+  const sources: SourceFile[] = [];
 
   for (let fi = 0, flen = filepaths.length; fi < flen; fi += 1) {
     const filepath = filepaths[fi];
 
-    const source = project.addExistingSourceFile(filepath);
+    // ! add all sources first, then process. Or, it will be terribly slow
+    const source = project.addSourceFileAtPath(filepath);
+    sources.push(source);
+  }
 
+  for (let fi = 0, flen = filepaths.length; fi < flen; fi += 1) {
+    const filepath = filepaths[fi];
+    logger.debug(filepath);
+    const source = sources[fi];
     const exportDeclMap = source.getExportedDeclarations();
     if (exportDeclMap.size) {
       const path = relative(outDir, filepath);
@@ -162,7 +170,7 @@ export const generateIndex = async ({
                     .join(', ')}`
                 );
               } else {
-                if (prevFroms.some((x) => x !== from)) {
+                if (prevFroms.some((x): boolean => x !== from)) {
                   // overloaded
                   // different values exported to same name from different files
                   overloadedNames[betterExportName] = 1;
@@ -206,13 +214,16 @@ export const generateIndex = async ({
 
   const exports: string[] = [];
 
+  logger.debug('fromToExportClauses.entries start');
   for (const [from, clauses] of Array.from(fromToExportClauses.entries())) {
     // same file can export both ts type and value under same export name
     // -> use unique filter
+    logger.debug('unique / sort');
     const uniqClauses = uniqueItems(clauses).sort();
+    logger.debug('unique / sort done');
     exports.push(
       `export { ${uniqClauses
-        .map((c) =>
+        .map((c): string =>
           // prefix filename if overloaded
           overloadedNames[c] === 1
             ? `${c} as ${getNamePrefixFromFrom(from, c)}`
@@ -221,6 +232,7 @@ export const generateIndex = async ({
         .join(', ')} } from ${from};`
     );
   }
+  logger.debug('fromToExportClauses.entries end');
 
   const text = exports.join('\n');
   if (write) {

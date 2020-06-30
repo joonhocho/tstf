@@ -47,7 +47,7 @@ export default class GenerateIndex extends Command {
     verbose: flagsLib.string({
       char: 'v',
       description: 'logging verbosity',
-      options: Object.keys(LogLevel).filter((x) => !/\d/.test(x)),
+      options: Object.keys(LogLevel).filter((x): boolean => !/\d/.test(x)),
       default: 'log',
     }),
   };
