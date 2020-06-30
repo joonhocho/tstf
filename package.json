@@ -1,6 +1,6 @@
 {
   "name": "tstf",
-  "version": "0.0.23",
+  "version": "0.0.24",
   "description": "CLI tools for useful TypeScript code transformations such as paths transforms.",
   "keywords": [
     "CLI",
@@ -52,32 +52,32 @@
   },
   "pre-commit": "precommit",
   "dependencies": {
-    "@oclif/command": "^1.5.19",
-    "@oclif/config": "^1.13.3",
-    "@oclif/plugin-help": "^2.2.3",
-    "@oclif/plugin-not-found": "^1.2.3",
+    "@oclif/command": "^1.7.0",
+    "@oclif/config": "^1.16.0",
+    "@oclif/plugin-help": "^3.1.0",
+    "@oclif/plugin-not-found": "^1.2.4",
     "@oclif/plugin-warn-if-update-available": "^1.7.0",
-    "ts-jutil": "^1.0.23",
-    "ts-morph": "^4.3.2",
-    "tslib": "^1.10.0"
+    "ts-jutil": "^1.1.2",
+    "ts-morph": "^7.1.2",
+    "tslib": "^2.0.0"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1.22.2",
-    "@types/jest": "^24.0.24",
-    "@types/node": "^12.12.21",
-    "coveralls": "^3.0.9",
-    "globby": "^10.0.1",
-    "jest": "^24.9.0",
+    "@types/jest": "^26.0.3",
+    "@types/node": "^14.0.14",
+    "coveralls": "^3.1.0",
+    "globby": "^11.0.1",
+    "jest": "^26.1.0",
     "pre-commit": "^1.2.2",
-    "prettier": "^1.19.1",
-    "ts-jest": "^24.2.0",
-    "ts-node": "^8.5.4",
+    "prettier": "^2.0.5",
+    "ts-jest": "^26.1.1",
+    "ts-node": "^8.10.2",
     "tscpaths": "^0.0.9",
     "tsdef": "^0.0.13",
-    "tslint": "^5.20.1",
+    "tslint": "^6.1.2",
     "tslint-config-airbnb": "^5.11.2",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.7.4"
+    "typescript": "^3.9.5"
   },
   "engines": {
     "node": ">=8.0.0"
